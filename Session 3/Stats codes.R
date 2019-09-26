@@ -131,3 +131,18 @@ b <- c(2,5,6,7,9,12,13,15,16,15,13,12,10,5,2)
 cor(a, b, method = "pearson")
 cor(a, b, method = "kendall")
 cor(a, b, method = "spearman")
+
+
+#------Cohen's d Test and Cliff delta test -------
+install.packages("effsize")
+library("effsize")
+
+treatment <- c(10,10,20,20,20,30,30,30,40,50)
+control <- c(10,20,30,40,40,50)
+
+res2 = cohen.d(treatment,control,return.dm=TRUE)
+print(res2)
+
+res = cliff.delta(treatment,control,return.dm=TRUE)
+print(res)
+#print(res$dm)
