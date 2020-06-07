@@ -1,5 +1,5 @@
 
-#---- min max scaling-----
+#---- Scaling in R (z-score)-----
 
 # Load sample dataset
 data(iris)
@@ -10,14 +10,24 @@ a
 #Normalize a with min-max function
 scale(a, center = TRUE, scale = TRUE)
 
-# normalizing the content of a matrix with min-max
+# normalizing the content of a matrix with R default scaling package.
+# 
 x <- matrix(1:10, ncol = 2)
 x
 scale(x)
 
-#--------- z-score
+#--------- z-score by hand 
 z = (x - mean(x)/sd(x))
 z
+
+#------- min-max scaling
+minmax <- function(x) {
+  return((x- min(x)) /(max(x)-min(x)))
+}
+
+samplevec = c(-23,2,34,12,11,20,0)
+
+minmax(samplevec)
 
 #------norms
 #Lp=1 norm
