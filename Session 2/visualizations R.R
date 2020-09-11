@@ -87,50 +87,29 @@ df <- cbind(x,y,z)
 heatmap(df, scale = "none")
 # check here for more examples: https://www.datanovia.com/en/lessons/heatmap-in-r-static-and-interactive-visualization/
 
-#---------------- Calendar plot ------------------
+#---------------- Calendar heat plot ------------------
 
-# http://margintale.blogspot.in/2012/04/ggplot2-time-series-heatmaps.html
-library(ggplot2)
-library(plyr)
-library(scales)
-library(zoo)
+# http://www.columbia.edu/~sg3637/blog/Time_Series_Heatmaps.html
 
-df <- read.csv("/Users/rawassizadeh/EVERYTHING/Work/TEACHING/CS\ 688\ -\ Web\ Analytics\ and\ Mining/toGithub/Session\ 2/yahoo.csv", header=TRUE, sep=",")
-df$date <- as.Date(df$date)  # format date
-df <- df[df$year >= 2012, ]  # filter reqd years
+#install.packages('tidyquant', repos = "http://cran.us.r-project.org")
+library('tidyquant')
 
-# Create Month Week
-df$yearmonth <- as.yearmon(df$date)
-df$yearmonthf <- factor(df$yearmonth)
-df <- ddply(df,.(yearmonthf), transform, monthweek=1+week-min(week))  # compute week number of month
-df <- df[, c("year", "yearmonthf", "monthf", "week", "monthweek", "weekdayf", "VIX.Close")]
-head(df)
+#install.packages("ggplot2", repos = "http://cran.us.r-project.org")
+library('ggplot2')
 
-# Plot
-ggplot(df, aes(monthweek, weekdayf, fill = VIX.Close)) + 
-  geom_tile(colour = "white") + 
-  facet_grid(year~monthf) + 
-  scale_fill_gradient(low="blue", high="red") +
-  labs(x="Week of Month",
-       y="",
-       title = "Calendar plot example", 
-       subtitle="", 
-       fill="Close")
+#install.packages("chron")
+library("chron")
 
-#----------- Timeline plot ------------
-install.packages("timevis")
+install.packages("dplyr")
 
-library(timevis)
+#Load the function to the local through Paul Bleicher GitHub page
+source("https://raw.githubusercontent.com/iascchen/VisHealth/master/R/calendarHeat.R")
+        
+amznStock = as.data.frame(tidyquant::tq_get(c("AMZN"),get="stock.prices")) # get data using tidyquant
+amznStock = amznStock[year(amznStock$date) > 2012, ] # Using data only after 2012
 
-data <- data.frame(
-  id      = 1:4,
-  content = c("Eating Lots of Carbs", "Eating Lots of Fats",
-              "Staying in hospital", "Start Excersize"),
-  start   = c("2019-01-10", "2019-01-11",
-              "2019-01-20", "2019-02-14"),
-  end     = c("2019-01-20", "2019-01-20", "2019-02-10", NA))
-
-timevis(data)
+r2g <- c("#D61818", "#FFAE63", "#FFFFBD", "#B5E384")
+calendarHeat(amznStock$date, amznStock$adjusted, ncolors = 99, color = "r2g", varname="AMZN Adjusted Close")
 
 #-------- Violin plot -------------
 
