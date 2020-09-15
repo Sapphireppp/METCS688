@@ -4,12 +4,13 @@ x <- c(12,23,40,35,13,34,25,15,17,32,23,36,33,31)
 y <- c(10,13,35,35,23,34,35,15,17,32,23,32,37,32)
 df <- cbind(x,y)
 df
-plot(df, main="Scatterplot Example", xlab="X labels ", ylab="Y labels", pch =16)
-plot(df, main="Scatterplot Example", xlab="X labels ", ylab="Y labels", pch =24, cex=0.9, col="blue", bg="blue")
+plot(df, main="Scatterplot Example", xlab="X labels ", ylab="Y labels", pch =16) # black and white
+
+plot(df, main="Scatterplot Example", xlab="X labels ", ylab="Y labels", pch =21, cex=0.9, col="blue", bg="blue")
 
 #----Line plot----------------------
 gausdf <- c( 8.9,-1.6 ,8,-1.5,1.5, -1.8,-8.5,1.5, 1.7,-6.2, 1.9, -2.4, -9.1, 5.4, 1.1, -3.3,8.5, -8.1,3.2, -1.6)
-plot(gausdf, type = "l", xlab="X labels ", ylab="Y labels") 
+plot(gausdf, type = "l", xlab="X labels ", ylab="Y labels", col="blue") # ,  pch =22, cex=0.9, col="blue", bg="blue"
 
 #------Pie chart---------------------
 slices <- c(15, 25, 60)
@@ -36,29 +37,31 @@ barplot(counts, main="Car Distribution by Gears and VS",
 install.packages("geoR")
 library("geoR")
 
+#--- first method
 cone <- function(x, y){
   sqrt(x^2+y^2)
 }
 x <- y <- seq(-1, 1, length= 18)
 z <- outer(x, y, cone)
 
-persp( x, y, z, phi = 25, theta = 45,
+persp( x, y, z, phi = 40, theta = 45,
        xlab = "X Coordinate", 
        ylab = "Y Coordinate", 
        zlab = "Z Coordinate",
        main = "Surface plot example",
-       col = "antiquewhite", shade = 0.5)
+       col = "antiquewhite", shade = 0.15)
 
+#--- Second method
 
 x=seq(-pi,pi,len=20)
 y=x;
-f=outer(x,y,function(x,y)cos(y)/(1+x^2));
+f=outer(x, y, function(x,y)cos(y)/(1+x^2));
 f[1:5, 1:5]
 persp(x,y,f, phi = 35, theta = 45, 
       xlab = "Calories ", 
       ylab = "Time of Day", 
       zlab = "Weight",
-      col = "antiquewhite", expand = 0.4, d=12)
+      col = "yellow", expand = 0.4, d=10)
 
 #----------- AREA PLOT ------------------
 install.packages("ggplot2")
@@ -71,12 +74,13 @@ library("ggthemes")
 library("extrafont")
 library("plyr")
 
-df2 <- read.csv("/Users/rawassizadeh/EVERYTHING/Work/TEACHING/CS\ 688\ -\ Web\ Analytics\ and\ Mining/Session\ 2/copper-data-for-tutorial.csv" , header=TRUE, sep=",")
+df2 <- read.csv("/Users/rawassizadeh/EVERYTHING/Work/TEACHING/CS\ 688_WebAnalyticsMining/toGithub/Session\ 2/copper-data-for-tutorial.csv" , header=TRUE, sep=",")
 df2
 
 p2 <- ggplot() + geom_area(aes(y = export, x = year, fill = product), data = df2,  stat="identity")
 p2
 # read more about it here: http://t-redactyl.io/blog/2015/12/creating-plots-in-r-using-ggplot2-part-2-area-plots.html
+
 
 #--------------------Heat Map-----------
 
@@ -87,10 +91,9 @@ df <- cbind(x,y,z)
 heatmap(df, scale = "none")
 # check here for more examples: https://www.datanovia.com/en/lessons/heatmap-in-r-static-and-interactive-visualization/
 
-#---------------- Calendar heat plot ------------------
+#---------------- Calendar plot ------------------
 
-# http://www.columbia.edu/~sg3637/blog/Time_Series_Heatmaps.html
-
+# http://margintale.blogspot.in/2012/04/ggplot2-time-series-heatmaps.html
 #install.packages('tidyquant', repos = "http://cran.us.r-project.org")
 library('tidyquant')
 
@@ -104,12 +107,28 @@ install.packages("dplyr")
 
 #Load the function to the local through Paul Bleicher GitHub page
 source("https://raw.githubusercontent.com/iascchen/VisHealth/master/R/calendarHeat.R")
-        
+
 amznStock = as.data.frame(tidyquant::tq_get(c("AMZN"),get="stock.prices")) # get data using tidyquant
 amznStock = amznStock[year(amznStock$date) > 2012, ] # Using data only after 2012
 
 r2g <- c("#D61818", "#FFAE63", "#FFFFBD", "#B5E384")
 calendarHeat(amznStock$date, amznStock$adjusted, ncolors = 99, color = "r2g", varname="AMZN Adjusted Close")
+
+
+#----------- Timeline plot ------------
+install.packages("timevis")
+
+library(timevis)
+
+data <- data.frame(
+  id      = 1:4,
+  content = c("Eating Lots of Carbs", "Eating Lots of Fats",
+              "Staying in hospital", "Start Excersize"),
+  start   = c("2019-01-10", "2019-01-11",
+              "2019-01-20", "2019-02-14"),
+  end     = c("2019-01-20", "2019-01-20", "2019-02-10", NA))
+
+timevis(data)
 
 #-------- Violin plot -------------
 
@@ -122,7 +141,8 @@ df <- ToothGrowth
 ggviolin(df, x = "dose", y = "len", add = "boxplot")
 
 
----- 
+#---- another example 
+mtcars
 ggplot(mtcars, aes(x = factor(cyl), y = mpg)) + 
   geom_violin() +
   geom_boxplot(width = 0.1) + 
@@ -130,16 +150,6 @@ ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
   theme(
         panel.background = element_blank(), axis.line = element_line(colour = "black"))
 # fill = factor(cyl)
-mtcars
-
-----
-library(ggjoy)
-
-dat %>% mutate(group = reorder(group, value, median)) %>% 
-  ggplot(aes(group, value)) + geom_violin(fill = "blue")
-
-
-ToothGrowth
 
 
 #----Data Ink Ratio Example----
@@ -149,7 +159,7 @@ barplot(df, col="blue", bg="gray", names.arg=c("a","b","c","d","e","f","g"),
         beside = TRUE, cex.axis = par("cex.axis"), cex.names = par("cex.axis"))
 
 
-#------ Cord diagram ------
+#------ Chord diagram ------
 install.packages("devtools")
 library("devtools")
 devtools::install_github("mattflor/chorddiag")
